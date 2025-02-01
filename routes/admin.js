@@ -82,7 +82,7 @@ res.json({
 
 adminRouter.post('/course',adminMiddleware, async function(req,res){
 const adminId=req.userId;
-const {title,description,imageUrl,price,creatorId}=req.body;
+const {title,description,imageUrl,price} =req.body;
 const course= await courseModel.create({
     title,
     description,
@@ -95,10 +95,28 @@ res.json({
 
 })
 });
-adminRouter.put('/',function(req,res){
+
+adminRouter.put('/course',adminMiddleware,async function(req,res){
+const title=req.body.title;
+const description=req.body.description;
+    const price=req.body.price
+    const imageUrl=req.body.imageUrl
+    const creatorId=req.body.creatorId
+    const course= await courseModel.create({
+        title,
+        description,
+        price,
+        imageUrl,
+        creatorId
+    });
+    res.json({
+        message:"updated course",
+        course:course
+    });
 
 });
-adminRouter.get('/bulk',function(req,res){
+
+adminRouter.get('/bulk',adminMiddleware,function(req,res){
 
 });
 module.exports={
