@@ -92,32 +92,42 @@ const course= await courseModel.create({
 })
 res.json({
     message:"course created",
+    courseId:course._id
 
 })
 });
 
 adminRouter.put('/course',adminMiddleware,async function(req,res){
-const title=req.body.title;
-const description=req.body.description;
+const adminId=req.userId;
+    const title=req.body.title;
+    const description=req.body.description;
     const price=req.body.price
     const imageUrl=req.body.imageUrl
-    const creatorId=req.body.creatorId
-    const course= await courseModel.create({
+    const courseId=req.body.courseId
+    const course= await courseModel.updateOne({
+        _id: courseId,
+        creatorId:adminId
+    },{
         title,
         description,
         price,
-        imageUrl,
-        creatorId
+        imageUrl
     });
     res.json({
-        message:"updated course",
+        message:"course updated",
         course:course
     });
 
 });
 
-adminRouter.get('/bulk',adminMiddleware,function(req,res){
-
+adminRouter.get('/bulk',adminMiddleware,async function(req,res){
+const adminId=req.userId;
+const course=await courseModel.find({
+creatorId:adminId
+});
+res.json({
+    course
+})
 });
 module.exports={
     adminRouter:adminRouter
