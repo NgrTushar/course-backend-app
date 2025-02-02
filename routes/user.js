@@ -1,10 +1,10 @@
 const {Router}=require("express");
-const { userModel } = require("../db");
+const { userModel, purchaseModel } = require("../db");
 const jwt=require("jsonwebtoken");
 const bcrypt=require("bcryptjs");
 const {z}=require("zod");
 const {JWT_SECRET_USER}=require("../config");
-
+const {userMiddleware}=require("../middleware/user")
 const userRouter=Router(); 
 
 userRouter.post('/signup',async function(req,res){
@@ -78,9 +78,15 @@ userRouter.post('/signin',async function(req,res){
     }
 });
 
-userRouter.get('/purchases',function(req,res){
-res.json({
-message:"userPurchases"
+userRouter.get('/purchases',userMiddleware,async function(req,res){
+const userId=req.userId;
+const purchases=await purchaseModel.find({
+userId
+});
+
+    res.json({
+message:"userPurchases",
+purchases
 })
 });
 
