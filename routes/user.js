@@ -1,5 +1,5 @@
 const {Router}=require("express");
-const { userModel, purchaseModel } = require("../db");
+const { userModel, purchaseModel, courseModel } = require("../db");
 const jwt=require("jsonwebtoken");
 const bcrypt=require("bcryptjs");
 const {z}=require("zod");
@@ -83,10 +83,21 @@ const userId=req.userId;
 const purchases=await purchaseModel.find({
 userId
 });
+let purchasedCoursesIds=[];
+for(let i=0;i<purchases.length;i++){
+    purchasedCoursesIds.push(purchases[i].courseId);
+}
+const courseData=await courseModel.find({
+    _id:{$in:purchasedCoursesIds}
+})
+/*await courseModel.find({
+    _id:{$in: purchases.map(x => x.courseId)}
+}) */
 
     res.json({
 message:"userPurchases",
-purchases
+purchases,
+courseData
 })
 });
 
